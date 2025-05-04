@@ -41,11 +41,8 @@ class Grid:
         return self._entities_at_coord.get(coord, [])
 
     def add_entity_at(self, row: int, col: int, entity: "Entity") -> bool:
-        self.validate_entity(row, col, entity)
-        if entity in self._coord_of_entity:
-            raise ValueError(f"Entity {entity} already exists in the grid.")
-
         coord = Coord(row, col)
+        self._validate_entity(coord, entity)
         self._entities_at_coord.setdefault(coord, []).append(entity)
         self._coord_of_entity[entity] = coord
         return True
@@ -126,12 +123,11 @@ class Grid:
         # Attempt to move the entity to the new position
         return self.move_entity(new_row, new_col, entity)
 
-    def validate_entity(self, row: int, col: int, entity: "Entity") -> bool:
+    def _validate_entity(self, coord: Coord, entity: "Entity") -> bool:
         # Check if the entity already exists in the grid
         if entity in self._coord_of_entity:
             raise ValueError(f"Entity {entity} already exists in the grid.")
 
-        coord = Coord(row, col)
         entities_at_coord = self._entities_at_coord.get(coord, [])
 
         entity_type = type(entity)
